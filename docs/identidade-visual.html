@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+<title>Identidade SACC v.3</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Pixelify+Sans:wght@400;600&family=VT323&display=swap">
+<style>
+/* Layout: guia vertical em "módulos" de terminal; cada seção carrega como um arquivo do Protocolo SACC v.3. Tema único escuro (tela CRT). */
+:root{
+  --void:#050208;        /* fundo: preto com leve viés violeta */
+  --panel:#0E0714;       /* superfície de janelas */
+  --magenta:#D63CE0;     /* cor principal: títulos, datas, grade */
+  --magenta-deep:#8A1F94;/* linhas da grade, bordas */
+  --ascii:#3B2347;       /* textura de "3" ao fundo */
+  --phosphor:#F4EEF7;    /* texto branco-fósforo */
+  --muted:#A495AE;       /* texto secundário */
+  --rgb-r:#FF2D2D; --rgb-y:#FFE61A; --rgb-c:#00E1FF; /* aberração cromática (só efeito, nunca texto) */
+  --f-display:"Silkscreen", "Courier New", monospace;
+  --f-sub:"Pixelify Sans", "Trebuchet MS", sans-serif;
+  --f-body:"VT323", "Courier New", monospace;
+  --px:4px;              /* unidade de pixel: todo espaçamento é múltiplo */
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--void);color:var(--phosphor);font-family:var(--f-body);font-size:22px;line-height:1.35;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(to bottom,rgba(255,255,255,.035) 0 1px,transparent 1px 3px)}
+::selection{background:var(--magenta);color:var(--void)}
+a{color:var(--magenta)}
+:focus-visible{outline:var(--px) solid var(--rgb-c);outline-offset:var(--px)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;overflow:hidden;min-height:620px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding-block:48px 200px;text-align:center}
+.ascii{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;margin:0;
+  font-family:var(--f-body);font-size:13px;line-height:12px;color:var(--ascii);white-space:pre;user-select:none;padding-bottom:120px}
+.hero > *:not(.ascii):not(.grid){position:relative;z-index:2}
+.eyebrow{font-family:var(--f-display);color:var(--magenta);letter-spacing:.12em;font-size:clamp(18px,3vw,28px);margin:0}
+.where{font-family:var(--f-display);color:var(--magenta);font-size:16px;letter-spacing:.15em;margin:0}
+.logo{width:min(380px,80vw);height:auto;overflow:visible}
+.logo .c{animation:jitter 3.2s steps(1) infinite}
+.loading{font-family:var(--f-display);font-size:clamp(16px,2.6vw,26px);letter-spacing:.04em;margin:0;min-height:1.4em}
+.loading .caret{display:inline-block;width:.6em;height:1em;background:var(--phosphor);vertical-align:-.12em;animation:blink 1s steps(1) infinite}
+.bar{width:min(360px,80vw);height:20px;border:var(--px) solid var(--magenta);padding:2px;display:flex;gap:2px}
+.bar i{flex:1;background:var(--magenta);opacity:.15}
+.bar i.on{opacity:1}
+.cursor{position:absolute;right:22%;top:58%;z-index:3;display:flex;align-items:flex-end;gap:4px}
+.cursor .hg{animation:flip 2s steps(1) infinite}
+.grid{position:absolute;left:-50%;right:-50%;bottom:0;height:220px;z-index:1;perspective:260px;pointer-events:none;
+  -webkit-mask:linear-gradient(to top,#000 40%,transparent);mask:linear-gradient(to top,#000 40%,transparent)}
+.grid::before{content:"";position:absolute;inset:0 0 -60% 0;transform:rotateX(62deg);transform-origin:50% 0;
+  background:
+   linear-gradient(90deg,var(--magenta-deep) 2px,transparent 2px) 0 0/64px 64px,
+   linear-gradient(0deg,var(--magenta-deep) 2px,transparent 2px) 0 0/64px 64px;
+  animation:run 1.6s linear infinite}
+
+@keyframes run{to{background-position:0 64px,0 64px}}
+@keyframes blink{50%{opacity:0}}
+@keyframes flip{50%{transform:rotate(180deg)}}
+@keyframes jitter{0%,88%{transform:translate(0,0)}90%{transform:translate(-3px,1px)}93%{transform:translate(4px,-2px)}96%{transform:translate(-1px,0)}}
+
+/* ---------- SEÇÕES ---------- */
+section.mod{padding-block:72px;border-top:2px dashed var(--magenta-deep)}
+.mod-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px;margin-bottom:32px}
+.path{font-family:var(--f-body);color:var(--muted);font-size:22px}
+.path b{color:var(--rgb-c);font-weight:400}
+h2{font-family:var(--f-display);font-weight:700;color:var(--magenta);font-size:clamp(28px,5vw,48px);line-height:1;margin:0;text-wrap:balance;letter-spacing:.02em}
+h3{font-family:var(--f-sub);font-weight:600;font-size:24px;margin:0 0 8px}
+p{margin:0 0 16px;max-width:62ch}
+.lead{font-size:26px;color:var(--phosphor)}
+.small{font-size:19px;color:var(--muted)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px}
+.cols > *{min-width:0}
+
+/* janela pixel */
+.win{background:var(--panel);border:var(--px) solid var(--magenta-deep);box-shadow:8px 8px 0 0 #000, 8px 8px 0 var(--px) var(--magenta-deep)}
+.win-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--magenta-deep);color:var(--phosphor);
+  font-family:var(--f-display);font-size:13px;padding:4px 8px;letter-spacing:.06em}
+.win-bar span:last-child{letter-spacing:.3em}
+.win-body{padding:20px}
+
+/* paleta */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:16px}
+.sw{border:var(--px) solid var(--magenta-deep);background:var(--panel)}
+.sw .chip{height:96px;border-bottom:var(--px) solid var(--magenta-deep)}
+.sw div:last-child{padding:10px 12px}
+.sw b{display:block;font-family:var(--f-display);font-weight:400;font-size:14px}
+.sw code{font-family:var(--f-body);font-size:20px;color:var(--muted)}
+.ratio{display:flex;height:28px;margin-top:20px;border:var(--px) solid var(--magenta-deep)}
+
+/* tipografia */
+.type-row{display:grid;grid-template-columns:200px 1fr;gap:16px 32px;padding-block:24px;border-bottom:2px dotted var(--magenta-deep);align-items:baseline}
+.type-row:last-child{border-bottom:0}
+.type-row > div{min-width:0}
+.type-meta{font-size:19px;color:var(--muted)}
+.type-meta b{display:block;color:var(--phosphor);font-weight:400;font-size:22px}
+.s-display{font-family:var(--f-display);font-weight:700;color:var(--magenta);font-size:clamp(34px,7vw,72px);line-height:.95;overflow-wrap:anywhere}
+.s-sub{font-family:var(--f-sub);font-size:clamp(24px,3.4vw,34px)}
+.s-body{font-family:var(--f-body);font-size:24px}
+
+/* elementos */
+.el-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px}
+.el{background:var(--panel);border:var(--px) solid var(--magenta-deep);display:flex;flex-direction:column;min-width:0}
+.el .stage{height:200px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border-bottom:var(--px) solid var(--magenta-deep);background:var(--void)}
+.el .txt{padding:16px 18px}
+.el .txt p{font-size:20px;margin:0}
+.mini-grid{position:absolute;inset:0;perspective:180px;overflow:hidden}
+.mini-grid::before{content:"";position:absolute;left:-50%;right:-50%;top:40%;bottom:-120%;transform:rotateX(60deg);transform-origin:50% 0;
+  background:linear-gradient(90deg,var(--magenta) 2px,transparent 2px) 0 0/40px 40px,linear-gradient(0deg,var(--magenta) 2px,transparent 2px) 0 0/40px 40px;animation:run2 1.2s linear infinite}
+@keyframes run2{to{background-position:0 40px,0 40px}}
+.rgb-word{font-family:var(--f-display);font-weight:700;font-size:44px;position:relative;color:var(--phosphor)}
+.rgb-word::before,.rgb-word::after{content:attr(data-t);position:absolute;inset:0;mix-blend-mode:screen}
+.rgb-word::before{color:var(--rgb-r);transform:translate(-3px,-2px);z-index:-1}
+.rgb-word::after{color:var(--rgb-c);transform:translate(3px,2px);z-index:-1}
+.el:hover .rgb-word::before{animation:glitchA .3s steps(2) infinite}
+.el:hover .rgb-word::after{animation:glitchB .3s steps(2) infinite}
+@keyframes glitchA{50%{transform:translate(-7px,1px);clip-path:inset(20% 0 40% 0)}}
+@keyframes glitchB{50%{transform:translate(6px,-2px);clip-path:inset(55% 0 10% 0)}}
+.ascii-mini{font-family:var(--f-body);font-size:12px;line-height:11px;color:var(--magenta);white-space:pre;margin:0}
+.icons{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;align-items:center;padding:12px}
+.icons figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:16px;color:var(--muted)}
+
+/* componentes */
+.btn-wrap{display:inline-block;text-decoration:none;filter:drop-shadow(4px 4px 0 var(--rgb-c));transition:filter .08s steps(1),transform .08s steps(1)}
+.btn{display:inline-flex;align-items:center;gap:12px;background:var(--magenta);color:var(--void);font-family:var(--f-display);font-weight:700;font-size:18px;letter-spacing:.06em;padding:14px 22px;
+  clip-path:polygon(0 4px,4px 4px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px))}
+.btn-wrap:hover{filter:drop-shadow(4px 4px 0 var(--rgb-y))}
+.btn-wrap:hover .btn{background:var(--phosphor)}
+.btn-wrap:active{transform:translate(4px,4px);filter:none}
+.btn-ghost .btn{background:transparent;color:var(--magenta);box-shadow:inset 0 0 0 var(--px) var(--magenta)}
+.btn-ghost{filter:none}
+.btn-ghost:hover .btn{background:var(--magenta);color:var(--void)}
+.comp-row{display:flex;flex-wrap:wrap;gap:24px;align-items:center}
+
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.tab{font-family:var(--f-display);font-size:14px;background:transparent;color:var(--muted);border:var(--px) solid var(--magenta-deep);padding:8px 12px;cursor:pointer;line-height:1.2;text-align:left}
+.tab b{display:block;font-size:22px;color:inherit}
+.tab[aria-selected="true"]{background:var(--magenta);border-color:var(--magenta);color:var(--void)}
+.tab:hover:not([aria-selected="true"]){color:var(--phosphor);border-color:var(--magenta)}
+.slots{display:flex;flex-direction:column;gap:12px}
+.slot{display:grid;grid-template-columns:84px 40px 1fr auto;gap:16px;align-items:center;padding:12px 14px;border:2px solid var(--magenta-deep);background:var(--void)}
+.slot time{font-family:var(--f-display);font-size:16px;color:var(--magenta);font-variant-numeric:tabular-nums}
+.slot .t{min-width:0}
+.slot .t b{display:block;font-family:var(--f-sub);font-weight:600;font-size:21px;line-height:1.15}
+.slot .t span{font-size:19px;color:var(--muted)}
+.tag{font-family:var(--f-display);font-size:11px;letter-spacing:.08em;padding:4px 8px;border:2px solid currentColor;white-space:nowrap}
+.tag.pal{color:var(--rgb-c)} .tag.min{color:var(--rgb-y)} .tag.comp{color:var(--rgb-r)} .tag.soc{color:var(--muted)}
+.example{font-family:var(--f-display);font-size:11px;color:var(--rgb-y);letter-spacing:.1em}
+
+.count{display:flex;flex-wrap:wrap;gap:12px}
+.count div{background:var(--void);border:var(--px) solid var(--magenta);padding:10px 14px;min-width:88px;text-align:center}
+.count b{display:block;font-family:var(--f-display);font-size:34px;color:var(--phosphor);font-variant-numeric:tabular-nums;line-height:1}
+.count span{font-family:var(--f-display);font-size:11px;color:var(--magenta);letter-spacing:.1em}
+
+/* animações */
+.motion{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
+.motion li{list-style:none;border-left:var(--px) solid var(--magenta);padding:4px 0 4px 16px}
+.motion li b{display:block;font-family:var(--f-display);font-size:14px;color:var(--magenta);letter-spacing:.05em;margin-bottom:4px}
+.motion li span{font-size:20px;color:var(--muted)}
+.motion{padding:0;margin:0}
+
+/* wireframe */
+.wire{display:flex;flex-direction:column;gap:12px}
+.wire-row{display:grid;grid-template-columns:150px 1fr;gap:20px;border:2px dashed var(--magenta-deep);padding:16px;align-items:start}
+.wire-row > div{min-width:0}
+.wire-row .id{font-family:var(--f-display);font-size:13px;color:var(--rgb-c)}
+.wire-row .id b{display:block;font-size:20px;color:var(--magenta);margin-top:4px}
+.wire-row p{font-size:20px;margin:0}
+.todo{display:grid;gap:10px;padding:0;margin:0}
+.todo li{list-style:none;font-size:21px;display:flex;gap:12px}
+.todo li::before{content:"[ ]";color:var(--magenta);flex:none}
+
+footer{padding-block:48px;border-top:2px dashed var(--magenta-deep);font-size:19px;color:var(--muted)}
+
+@media (max-width:640px){
+  .type-row,.wire-row{grid-template-columns:1fr}
+  .slot{grid-template-columns:70px 1fr;}
+  .slot .ic{display:none}
+  .slot .tag{grid-column:2;justify-self:start}
+  .cursor{right:8%;top:62%}
+  .hero{padding-block:40px 170px;min-height:560px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<!-- ============ HERO ============ -->
+<header class="hero" aria-label="Demonstração da tela de abertura">
+  <pre class="ascii" id="ascii" aria-hidden="true"></pre>
+  <p class="where">IFFAR / FW · CIÊNCIA DA COMPUTAÇÃO</p>
+  <p class="eyebrow">09 A 13 DE NOVEMBRO</p>
+  <svg class="logo" id="logo" viewBox="330 350 420 290" role="img" aria-label="Símbolo de circuito em forma de árvore"></svg>
+  <p class="loading"><span id="typed"></span><span class="caret"></span></p>
+  <div class="bar" id="bar" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><span id="cur"></span><span class="hg" id="hg"></span></div>
+  <div class="grid" aria-hidden="true"></div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ CONCEITO ============ -->
+<section class="mod" id="conceito" style="border-top:0">
+  <div class="mod-head"><span class="path">C:\SACC\<b>conceito.txt</b></span><h2>O conceito</h2></div>
+  <div class="cols">
+    <div>
+      <p class="lead">O site é um sistema antigo dando boot. Cada seção é um módulo do <b style="color:var(--magenta);font-weight:400">Protocolo SACC v.3</b> que "carrega" enquanto a pessoa rola a página.</p>
+      <p>A referência são as artes que vocês já fizeram: fundo preto de tela CRT, magenta neon, a grade synthwave no chão, o cursor com ampulheta e o símbolo de circuito com o RGB desalinhado, como um monitor velho mal calibrado.</p>
+      <p class="small">"v.3" vira motivo visual: o número 3 aparece como textura ASCII no fundo, igual nos posts.</p>
+    </div>
+    <div class="win">
+      <div class="win-bar"><span>TOM_DE_VOZ.EXE</span><span>_□×</span></div>
+      <div class="win-body">
+        <p><b style="color:var(--magenta);font-weight:400">&gt;</b> Linguagem de terminal nos rótulos, português claro no conteúdo.</p>
+        <p style="font-size:20px;color:var(--muted);margin:0">Rótulo: <span style="color:var(--rgb-c)">C:\SACC\cronograma.dat</span><br>
+        Botão: <span style="color:var(--phosphor)">EXECUTAR INSCRIÇÃO</span><br>
+        Texto: "Cinco dias de palestras, minicursos e competições."<br>
+        Status: <span style="color:var(--rgb-y)">CARREGANDO... 100%</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CORES ============ -->
+<section class="mod" id="cores">
+  <div class="mod-head"><span class="path">C:\SACC\<b>paleta.pal</b></span><h2>Cores</h2></div>
+  <div class="swatches" id="swatches"></div>
+  <div class="ratio" aria-label="Proporção de uso das cores">
+    <div style="flex:70;background:var(--void)"></div>
+    <div style="flex:4;background:var(--ascii)"></div>
+    <div style="flex:14;background:var(--magenta)"></div>
+    <div style="flex:8;background:var(--phosphor)"></div>
+    <div style="flex:2;background:var(--rgb-r)"></div><div style="flex:1;background:var(--rgb-y)"></div><div style="flex:1;background:var(--rgb-c)"></div>
+  </div>
+  <p class="small" style="margin-top:10px">Proporção: ~70% preto, ~15% magenta, ~8% branco. Vermelho, amarelo e ciano aparecem só como "erro de monitor" (aberração cromática, foco, etiquetas), nunca em texto corrido.</p>
+</section>
+
+<!-- ============ TIPOGRAFIA ============ -->
+<section class="mod" id="tipografia">
+  <div class="mod-head"><span class="path">C:\SACC\<b>fontes.fnt</b></span><h2>Tipografia</h2></div>
+  <div class="type-row">
+    <div class="type-meta"><b>Silkscreen</b>Títulos, datas, botões. Sempre em caixa alta.</div>
+    <div class="s-display">SEMANA ACADÊMICA</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta"><b>Pixelify Sans</b>Subtítulos e nomes de atividades.</div>
+    <div class="s-sub">Ciência da Computação</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta"><b>VT323</b>Texto corrido e rótulos de terminal. Mínimo 20px.</div>
+    <div class="s-body">A Semana Acadêmica reúne estudantes, professores e convidados para cinco dias de palestras, minicursos e competições no campus Frederico Westphalen.</div>
+  </div>
+  <p class="small" style="margin-top:16px">Escala: 72 / 48 / 34 / 24 / 22 / 20 px. As três são gratuitas no Google Fonts e ficam nítidas porque o tamanho sempre cai em múltiplos da grade de pixel.</p>
+</section>
+
+<!-- ============ ELEMENTOS PIXEL ART ============ -->
+<section class="mod" id="elementos">
+  <div class="mod-head"><span class="path">C:\SACC\<b>sprites\</b></span><h2>Elementos pixel art</h2></div>
+  <div class="el-grid">
+    <div class="el">
+      <div class="stage"><span class="rgb-word" data-t="SACC">SACC</span></div>
+      <div class="txt"><h3>Aberração RGB</h3><p>Vermelho e ciano deslocados 3px. Passe o mouse: vira glitch. Usar no logo e em títulos de destaque.</p></div>
+    </div>
+    <div class="el">
+      <div class="stage"><pre class="ascii-mini" id="ascii-mini" aria-hidden="true"></pre></div>
+      <div class="txt"><h3>Textura ASCII "3"</h3><p>Formas desenhadas com o caractere 3, em violeta apagado, atrás do conteúdo.</p></div>
+    </div>
+    <div class="el">
+      <div class="stage"><div class="mini-grid"></div></div>
+      <div class="txt"><h3>Grade synthwave</h3><p>Chão em perspectiva andando sem parar. Fica no rodapé do hero e na seção de inscrição.</p></div>
+    </div>
+    <div class="el">
+      <div class="stage"><div class="icons" id="icons"></div></div>
+      <div class="txt"><h3>Ícones 9×9</h3><p>Um ícone por tipo de atividade, desenhados pixel a pixel, sempre em escala inteira (×3, ×4).</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMPONENTES ============ -->
+<section class="mod" id="componentes">
+  <div class="mod-head"><span class="path">C:\SACC\<b>componentes.lib</b></span><h2>Componentes</h2></div>
+
+  <div class="cols" style="margin-bottom:40px">
+    <div>
+      <h3>Botões</h3>
+      <p class="small">Cantos "mordidos" de 4px e sombra sólida ciano. Ao clicar, o botão afunda 4px.</p>
+      <div class="comp-row">
+        <a class="btn-wrap" href="#componentes"><span class="btn">▶ EXECUTAR INSCRIÇÃO</span></a>
+        <a class="btn-wrap btn-ghost" href="#componentes"><span class="btn">VER CRONOGRAMA</span></a>
+      </div>
+    </div>
+    <div>
+      <h3>Contagem regressiva</h3>
+      <p class="small">Para o hero ou a seção de inscrição. Conta até 09/11, 8h.</p>
+      <div class="count" id="count" aria-live="off">
+        <div><b id="cd-d">--</b><span>DIAS</span></div>
+        <div><b id="cd-h">--</b><span>HORAS</span></div>
+        <div><b id="cd-m">--</b><span>MIN</span></div>
+        <div><b id="cd-s">--</b><span>SEG</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="win">
+    <div class="win-bar"><span>CRONOGRAMA.DAT</span><span>_□×</span></div>
+    <div class="win-body">
+      <p class="example">EXEMPLO · AS ATIVIDADES ABAIXO SÃO FICTÍCIAS</p>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="slots" id="slots" role="tabpanel"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MOVIMENTO ============ -->
+<section class="mod" id="movimento">
+  <div class="mod-head"><span class="path">C:\SACC\<b>animacoes.cfg</b></span><h2>Movimento</h2></div>
+  <p>Regra geral: o movimento anda "em degraus", como um sprite, e não deslizando suave. Por isso quase tudo usa <span style="color:var(--rgb-c)">steps()</span>. A exceção é a grade, que corre contínua.</p>
+  <ul class="motion" style="margin-top:24px">
+    <li><b>BOOT</b><span>Na abertura: texto digitado letra a letra + barra de carregamento em blocos.</span></li>
+    <li><b>CURSOR</b><span>Caret piscando e ampulheta virando a cada segundo.</span></li>
+    <li><b>GLITCH</b><span>O logo treme a cada ~3s; títulos dão glitch no hover.</span></li>
+    <li><b>GRADE</b><span>Chão synthwave em loop infinito.</span></li>
+    <li><b>MÓDULOS</b><span>Ao entrar na tela, o título da seção "digita" o caminho C:\SACC\...</span></li>
+    <li><b>ACESSIBILIDADE</b><span>Com "reduzir movimento" ligado no sistema, tudo fica parado.</span></li>
+  </ul>
+</section>
+
+<!-- ============ ESTRUTURA ============ -->
+<section class="mod" id="estrutura">
+  <div class="mod-head"><span class="path">C:\SACC\<b>mapa_do_site.txt</b></span><h2>Estrutura da página</h2></div>
+  <p>Uma página só, com menu fixo no topo levando a cada seção.</p>
+  <div class="wire" style="margin-top:24px">
+    <div class="wire-row"><div class="id">/boot<b>Abertura</b></div><div><p>Tela de carregamento (a mesma do topo deste guia): datas, símbolo, "CARREGANDO PROTOCOLO SACC v.3..." e, ao terminar, aparece o título SEMANA ACADÊMICA + botão de inscrição.</p></div></div>
+    <div class="wire-row"><div class="id">/sobre<b>O evento</b></div><div><p>Janela de terminal com o texto sobre a semana, para quem é, local e números rápidos (dias, atividades, palestrantes).</p></div></div>
+    <div class="wire-row"><div class="id">/cronograma<b>Cronograma</b></div><div><p>Abas SEG 09 a SEX 13. Cada atividade: horário, ícone, título, palestrante/sala e etiqueta do tipo.</p></div></div>
+    <div class="wire-row"><div class="id">/inscricao<b>Inscrição</b></div><div><p>Chamada grande com contagem regressiva e botão "EXECUTAR INSCRIÇÃO" abrindo o Google Forms em nova aba. Grade synthwave ao fundo.</p></div></div>
+    <div class="wire-row"><div class="id">/eof<b>Rodapé</b></div><div><p>IFFAR / FW, contato, Instagram do curso e um "&gt; FIM DO PROTOCOLO_".</p></div></div>
+  </div>
+</section>
+
+<!-- ============ PENDÊNCIAS ============ -->
+<section class="mod" id="pendencias">
+  <div class="mod-head"><span class="path">C:\SACC\<b>pendencias.log</b></span><h2>Para montar o código</h2></div>
+  <ul class="todo">
+    <li>Cronograma real: dia, horário, título, palestrante, sala e tipo.</li>
+    <li>Link do Google Forms de inscrição.</li>
+    <li>Texto "sobre o evento" (ou tópicos, que eu redijo).</li>
+    <li>Confirmar o significado de SACC e o nome oficial do evento.</li>
+    <li>Arquivo do símbolo de circuito (SVG ou PNG em alta), se existir.</li>
+    <li>Contato e redes sociais para o rodapé.</li>
+  </ul>
+</section>
+</main>
+
+<footer><div class="wrap">&gt; FIM DO GUIA · Semana Acadêmica de Ciência da Computação · IFFAR Frederico Westphalen · 09–13/11/2026<span style="animation:blink 1s steps(1) infinite">_</span></div></footer>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const css = getComputedStyle(document.documentElement);
+  const v = n => css.getPropertyValue(n).trim();
+
+  // ---- sprites ----
+  function sprite(rows, map, s){
+    const h=rows.length, w=Math.max(...rows.map(r=>r.length));
+    let r='';
+    rows.forEach((row,y)=>[...row].forEach((ch,x)=>{ if(map[ch]) r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${map[ch]}"/>`; }));
+    return `<svg width="${w*s}" height="${h*s}" viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+  }
+  const W=v('--phosphor'), M=v('--magenta');
+  $('cur').innerHTML = sprite([
+    "X...........","XX..........","XWX.........","XWWX........","XWWWX.......","XWWWWX......","XWWWWWX.....","XWWWWWWX....",
+    "XWWWWWWWX...","XWWWWWXXXX..","XWWXWWX.....","XWX.XWWX....","XX...XWWX...","X....XWWX...",".....XWWX...","......XX...."],
+    {X:'#000',W:W},3);
+  $('hg').innerHTML = sprite(["XXXXXXX",".X...X.",".XWWWX.","..XWX..","...X...","..X.X..",".X.W.X.",".XWWWX.","XXXXXXX"],{X:W,W:W},3);
+
+  const ICONS = {
+    Palestra:["...XXX...","..X...X..","..X...X..","..X...X..","...XXX...",".X.....X.","..XX.XX..","....X....","..XXXXX.."],
+    Minicurso:[".........","..X...X..",".X.....X.","X...X...X","...X.....","X..X....X",".X.....X.","..X...X..","........."],
+    Competição:["XXXXXXXXX","X.XXXXX.X","X.XXXXX.X",".XXXXXXX.","...XXX...","....X....","...XXX...","..XXXXX..","........."],
+    Intervalo:["..X.X.X..",".X.X.X...",".........","XXXXXXX..","X.....XXX","X.....X.X","X.....XXX",".X...X...","..XXX...."],
+    Inscrição:["XXXXXXX..","X.....X..","X.XXX.X..","X.....X.X","X.XXX.XXX","X....XXX.","X.X.XXX..","X...XX...","XXXXX...."]
+  };
+  $('icons').innerHTML = Object.entries(ICONS).map(([k,r])=>`<figure>${sprite(r,{X:M},4)}<figcaption>${k}</figcaption></figure>`).join('');
+
+  // ---- logo de circuito com RGB ----
+  const paths = [
+    "M520 615 L478 575 L410 542 L355 495",
+    "M478 575 L477 490 L447 460 L445 422",
+    "M520 615 L565 578 L612 535 L690 515 L725 447",
+    "M565 578 L530 540 L530 478 L508 455 L508 400",
+    "M530 478 L563 465 L563 372",
+    "M612 535 L608 422",
+    "M690 515 L660 500 L660 418"
+  ];
+  const nodes=[[520,615],[478,575],[565,578],[612,535],[690,515],[410,542],[355,495],[477,490],[530,478],[445,422],[508,400],[563,372],[608,422],[660,418],[725,447]];
+  function layer(col,dx,dy,cls){
+    return `<g transform="translate(${dx} ${dy})" class="${cls||''}" fill="none" stroke="${col}" stroke-width="7" stroke-linejoin="miter">`+
+      paths.map(d=>`<path d="${d}"/>`).join('')+
+      nodes.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="13" fill="var(--void)" stroke-width="8"/>`).join('')+`</g>`;
+  }
+  $('logo').innerHTML =
+    `<defs><pattern id="dots" width="3" height="3" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="${W}"/></pattern></defs>`+
+    `<g class="c">`+layer(v('--rgb-r'),-4,-3)+layer(v('--rgb-y'),-2,-1)+layer(v('--rgb-c'),3,3)+layer('url(#dots)',0,0)+`</g>`;
+
+  // ---- ASCII "3" ----
+  function asciiShape(text, cols, rows, fontPx){
+    const c=document.createElement('canvas'); c.width=cols; c.height=rows;
+    const x=c.getContext('2d'); x.fillStyle='#fff'; x.textAlign='center'; x.textBaseline='middle';
+    x.setTransform(2,0,0,1,0,0);
+    x.font=`900 ${fontPx}px Arial, sans-serif`; x.fillText(text, cols/4, rows/2+1);
+    const d=x.getImageData(0,0,cols,rows).data; let out='';
+    for(let y=0;y<rows;y++){ for(let i=0;i<cols;i++){ out += d[(y*cols+i)*4+3]>110 ? '3' : ' '; } out+='\n'; }
+    return out;
+  }
+  // caracteres são ~2x mais altos que largos: o canvas é esticado na horizontal
+  $('ascii').textContent = asciiShape('v.3', 120, 38, 36);
+  $('ascii-mini').textContent = asciiShape('3', 34, 15, 17);
+
+  // ---- boot: digitação + barra ----
+  const msg='CARREGANDO PROTOCOLO SACC v.3...';
+  const bar=$('bar'); for(let i=0;i<16;i++) bar.appendChild(document.createElement('i'));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){ $('typed').textContent=msg; [...bar.children].forEach(b=>b.classList.add('on')); }
+  else {
+    let n=0;
+    (function tick(){
+      n++; $('typed').textContent=msg.slice(0,Math.min(n,msg.length));
+      const on=Math.round(Math.min(n/msg.length,1)*16);
+      [...bar.children].forEach((b,i)=>b.classList.toggle('on',i<on));
+      if(n < msg.length+25) setTimeout(tick, 70); else { n=0; setTimeout(tick,600); }
+    })();
+  }
+
+  // ---- paleta ----
+  const SW=[['--void','Vazio','fundo'],['--panel','Painel','janelas'],['--magenta','Magenta neon','títulos, botões'],['--magenta-deep','Magenta grade','bordas, grade'],
+            ['--ascii','Violeta ASCII','textura'],['--phosphor','Fósforo','texto'],['--rgb-r','Canal R','efeito'],['--rgb-y','Canal Y','efeito'],['--rgb-c','Canal C','foco, efeito']];
+  $('swatches').innerHTML = SW.map(([t,n,u])=>`<div class="sw"><div class="chip" style="background:var(${t})"></div><div><b>${n}</b><code>${v(t)} · ${u}</code></div></div>`).join('');
+
+  // ---- cronograma de exemplo ----
+  const DAYS=[['SEG','09'],['TER','10'],['QUA','11'],['QUI','12'],['SEX','13']];
+  const SAMPLE=[
+    [['19:00','Palestra','Abertura: carreira em tecnologia','Convidado(a) · Auditório','pal'],['20:30','Intervalo','Coffee break','Hall do bloco','soc'],['21:00','Minicurso','Git sem medo','Lab 3','min']],
+    [['19:00','Minicurso','Introdução a pixel art para jogos','Lab 1','min'],['21:00','Palestra','IA no dia a dia do dev','Auditório','pal']],
+    [['14:00','Competição','Maratona de programação','Labs 1–3','comp'],['19:30','Palestra','Segurança da informação','Auditório','pal']],
+    [['19:00','Minicurso','Do Figma ao código','Lab 2','min'],['21:00','Competição','Quiz retrô','Auditório','comp']],
+    [['19:00','Palestra','Egressos: onde estão agora','Auditório','pal'],['21:00','Intervalo','Encerramento + premiação','Hall do bloco','soc']]
+  ];
+  const TAGN={pal:'PALESTRA',min:'MINICURSO',comp:'COMPETIÇÃO',soc:'SOCIAL'};
+  const tabs=$('tabs');
+  function show(i){
+    [...tabs.children].forEach((t,j)=>t.setAttribute('aria-selected', j===i));
+    $('slots').innerHTML = SAMPLE[i].map(([h,ic,t,s,k])=>`<div class="slot"><time>${h}</time><span class="ic">${sprite(ICONS[ic],{X:M},3)}</span><div class="t"><b>${t}</b><span>${s}</span></div><span class="tag ${k}">${TAGN[k]}</span></div>`).join('');
+  }
+  DAYS.forEach(([d,n],i)=>{
+    const b=document.createElement('button'); b.className='tab'; b.id='tab-'+i; b.setAttribute('role','tab');
+    b.innerHTML=`${d}<b>${n}</b>`; b.onclick=()=>show(i); tabs.appendChild(b);
+  });
+  show(0);
+
+  // ---- contagem regressiva ----
+  const target=new Date('2026-11-09T08:00:00-03:00').getTime();
+  const pad=n=>String(n).padStart(2,'0');
+  function cd(){
+    let s=Math.max(0,Math.floor((target-Date.now())/1000));
+    $('cd-d').textContent=pad(Math.floor(s/86400)); s%=86400;
+    $('cd-h').textContent=pad(Math.floor(s/3600)); s%=3600;
+    $('cd-m').textContent=pad(Math.floor(s/60)); $('cd-s').textContent=pad(s%60);
+  }
+  cd(); setInterval(cd,1000);
+})();
+</script>
+
+</html>
