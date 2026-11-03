@@ -6,7 +6,6 @@
   <title>Semana Acadêmica · Ciência da Computação · IFFAR/FW</title>
   <meta name="description" content="3ª Semana Acadêmica de Ciência da Computação do IFFAR Frederico Westphalen, de 09 a 13 de novembro de 2026. Palestras, minicursos e competições.">
   <meta name="theme-color" content="#050208">
-  <meta name="author" content="Pedro Henrique Boligon Mathias">
   <meta property="og:title" content="Semana Acadêmica · Ciência da Computação">
   <meta property="og:description" content="IFFAR/FW · 09 a 13 de novembro de 2026">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -17,14 +16,10 @@
   <link rel="stylesheet" href="css/style.css">
 
   <script>
-    // A tela de carregamento aparece uma vez por sessão (ou com ?boot na URL)
-    // e nunca para quem pediu ao sistema para reduzir movimento.
+    // Quem pediu ao sistema para reduzir movimento não vê a tela de carregamento.
     (function () {
-      var d = document.documentElement, seen = false;
-      try { seen = sessionStorage.getItem("sacc-booted"); } catch (e) {}
-      if (/[?&]boot\b/.test(location.search)) seen = false;
       var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-      d.classList.add(!seen && !reduce ? "is-booting" : "is-ready");
+      document.documentElement.classList.add(reduce ? "is-ready" : "is-booting");
     })();
   </script>
 </head>
@@ -32,18 +27,19 @@
 
   <!-- ============ TELA DE CARREGAMENTO ============ -->
   <div class="boot" id="boot" role="status" aria-label="Carregando o site">
-    <pre class="ascii" data-ascii="v.3" data-size="120x40" aria-hidden="true"></pre>
     <div class="boot__inner">
       <ol class="boot__log" aria-hidden="true"></ol>
-      <svg class="logo boot__logo" data-logo aria-hidden="true"></svg>
-      <p class="boot__msg"><span class="boot__typed"></span><span class="caret"></span></p>
+      <div class="boot__art">
+        <pre class="ascii" data-ascii aria-hidden="true"></pre>
+        <img class="logo boot__logo" src="assets/logo-cc-icon.svg" alt="">
+      </div>
+      <p class="boot__msg"><span class="boot__typed"></span></p>
       <div class="boot__progress">
         <div class="bar" aria-hidden="true"></div>
         <span class="boot__pct">0%</span>
       </div>
       <p class="boot__hint">PRESSIONE QUALQUER TECLA</p>
     </div>
-    <button class="boot__sound" type="button">♪ ATIVAR SOM</button>
     <button class="boot__skip" type="button">PULAR ▶▶</button>
     <div class="grid" aria-hidden="true"></div>
   </div>
@@ -51,26 +47,23 @@
   <!-- ============ MENU ============ -->
   <nav class="nav" aria-label="Principal">
     <div class="wrap">
-      <a class="nav__prompt" href="#topo">C:\<b>SACC</b>&gt;<span class="caret"></span></a>
+      <a class="nav__logo" href="#topo"><img src="assets/logo-da-icon.svg" alt="Diretório Acadêmico, voltar ao início"></a>
       <ul class="nav__links">
         <li><a href="#sobre">SOBRE</a></li>
         <li><a href="#cronograma">CRONOGRAMA</a></li>
         <li><a class="is-cta" href="#inscricao">INSCRIÇÃO</a></li>
       </ul>
-      <button class="nav__sound" type="button" data-sound-toggle aria-label="Efeitos sonoros">
-        <span aria-hidden="true">♪</span> <span data-sound-label>SOM ON</span>
-      </button>
     </div>
   </nav>
 
   <!-- ============ ABERTURA ============ -->
   <header class="hero" id="topo">
-    <pre class="ascii" data-ascii="3" data-size="80x44" aria-hidden="true"></pre>
+    <pre class="ascii" data-ascii aria-hidden="true"></pre>
 
     <p class="hero__where hero__reveal">IFFAR / FW</p>
-    <h1 class="hero__title hero__reveal">
-      <span class="glitch" data-text="SEMANA">SEMANA</span>
-      <span class="glitch" data-text="ACADÊMICA">ACADÊMICA</span>
+    <h1 class="hero__title hero__reveal" aria-label="Semana Acadêmica">
+      <span>SEMANA</span>
+      <span>ACADEMICA</span>
     </h1>
     <p class="hero__course hero__reveal">Ciência da Computação</p>
     <p class="hero__date hero__reveal"><time datetime="2026-11-09">09</time> A <time datetime="2026-11-13">13</time> DE NOVEMBRO</p>
@@ -91,35 +84,61 @@
     <div class="grid" aria-hidden="true"></div>
   </header>
 
-  <!-- ============ PRÓXIMOS MÓDULOS ============ -->
+  <!-- ============ SEÇÕES ============ -->
   <main class="wrap">
     <section class="mod" id="sobre">
       <div class="mod__head"><span class="mod__path">C:\SACC\<b>sobre.txt</b></span><h2>O evento</h2></div>
-      <p class="mod__todo"><b>&gt;</b> Módulo em construção_</p>
+      <div class="about">
+        <div>
+          <h3>Tecnologia &amp; conhecimento para todos!</h3>
+          <p>O curso de Ciência da Computação do Instituto Federal Farroupilha, campus Frederico Westphalen, apresenta a 3ª Semana Acadêmica: cinco dias de palestras, minicursos e confraternização para quem estuda, trabalha ou simplesmente gosta de tecnologia.</p>
+          <p>A primeira edição aconteceu em janeiro de 2025. Venha fazer parte deste momento!</p>
+          <h3>Objetivos</h3>
+          <ul class="about__goals">
+            <li>Trazer o conhecimento técnico mais recente</li>
+            <li>Criar na academia um evento único</li>
+            <li>Promover discussões dentro da comunidade tech</li>
+          </ul>
+        </div>
+        <div class="win">
+          <div class="win__bar"><span>EVENTO.INF</span><span aria-hidden="true">_□×</span></div>
+          <dl class="win__body about__facts">
+            <div><dt>QUANDO</dt><dd>09 a 13 de novembro de 2026</dd></div>
+            <div><dt>HORÁRIO</dt><dd>A partir das 19:00</dd></div>
+            <div><dt>ONDE</dt><dd>IFFAR Frederico Westphalen, no Salão social e no Prédio de TI · <a href="https://www.google.com/maps/search/?api=1&amp;query=-27.38982,-53.43159" target="_blank" rel="noopener">ver no mapa</a></dd></div>
+            <div><dt>PARA QUEM</dt><dd>Acadêmicos, profissionais e entusiastas da área de tecnologia</dd></div>
+            <div><dt>INSCRIÇÃO</dt><dd><a data-forms target="_blank" rel="noopener">Fazer inscrição</a></dd></div>
+          </dl>
+        </div>
+      </div>
     </section>
     <section class="mod" id="cronograma">
-      <div class="mod__head"><span class="mod__path">C:\SACC\<b>cronograma.dat</b></span><h2>Cronograma</h2></div>
-      <p class="mod__todo"><b>&gt;</b> Módulo em construção_</p>
+      <div class="mod__head"><span class="mod__path">C:\SACC\<b>cronograma.json</b></span><h2>Cronograma</h2></div>
+      <div data-schedule></div>
     </section>
     <section class="mod" id="inscricao">
-      <div class="mod__head"><span class="mod__path">C:\SACC\<b>inscricao.exe</b></span><h2>Inscrição</h2></div>
-      <p class="mod__todo"><b>&gt;</b> Módulo em construção_</p>
+      <div class="mod__head"><span class="mod__path">C:\SACC\<b>inscricao.sh</b></span><h2 class="sr-only">Inscrição</h2></div>
+      <div class="signup">
+        <a class="btn btn--vhs" data-forms data-text="▶ EXECUTAR INSCRIÇÃO" target="_blank" rel="noopener" aria-label="Fazer inscrição no Google Forms"><span>▶ EXECUTAR INSCRIÇÃO</span></a>
+      </div>
     </section>
   </main>
 
   <footer class="footer">
     <div class="wrap footer__row">
-      <span>&gt; FIM DO PROTOCOLO · IFFAR Frederico Westphalen · 09–13/11/2026<span class="caret"></span></span>
-      <span class="footer__credit">
-        DESENVOLVIDO POR
-        <a href="https://github.com/Pedro-Henrique-Boligon-Mathias" target="_blank" rel="noopener author">Pedro Henrique Boligon Mathias</a>
+      <span class="footer__brand">
+        <img src="assets/logo-da-icon.svg" alt="Diretório Acadêmico">
+        &gt; IFFAR Frederico Westphalen · 09–13/11/2026
+      </span>
+      <span class="footer__repo">
+        CÓDIGO ABERTO NO
+        <a href="https://github.com/Pedro-Henrique-Boligon-Mathias/semana-academica-sacc" target="_blank" rel="noopener">GitHub</a>
       </span>
     </div>
   </footer>
 
   <script src="js/config.js"></script>
   <script src="js/pixel.js"></script>
-  <script src="js/sound.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
