@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Pixelify+Sans:wght@400;600&family=VT323&display=swap">
 <style>
-/* Layout: guia vertical em "módulos" de terminal; cada seção carrega como um arquivo do Protocolo SACC v.3. Tema único escuro (tela CRT). */
+/* Layout: guia vertical em "módulos" de terminal; cada seção carrega como um arquivo do SACC v.3. Tema único escuro (tela CRT). */
 :root{
   --void:#050208;        /* fundo: preto com leve viés violeta */
   --panel:#0E0714;       /* superfície de janelas */
@@ -38,12 +38,11 @@ a{color:var(--magenta)}
 /* ---------- HERO ---------- */
 .hero{position:relative;overflow:hidden;min-height:620px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding-block:48px 200px;text-align:center}
 .ascii{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;margin:0;
-  font-family:var(--f-body);font-size:13px;line-height:12px;color:var(--ascii);white-space:pre;user-select:none;padding-bottom:120px}
+  font-family:var(--f-body);font-size:13px;line-height:12px;letter-spacing:.11em;color:var(--ascii);white-space:pre;text-align:left;user-select:none;padding-bottom:120px}
 .hero > *:not(.ascii):not(.grid){position:relative;z-index:2}
 .eyebrow{font-family:var(--f-display);color:var(--magenta);letter-spacing:.12em;font-size:clamp(18px,3vw,28px);margin:0}
 .where{font-family:var(--f-display);color:var(--magenta);font-size:16px;letter-spacing:.15em;margin:0}
 .logo{width:min(380px,80vw);height:auto;overflow:visible}
-.logo .c{animation:jitter 3.2s steps(1) infinite}
 .loading{font-family:var(--f-display);font-size:clamp(16px,2.6vw,26px);letter-spacing:.04em;margin:0;min-height:1.4em}
 .loading .caret{display:inline-block;width:.6em;height:1em;background:var(--phosphor);vertical-align:-.12em;animation:blink 1s steps(1) infinite}
 .bar{width:min(360px,80vw);height:20px;border:var(--px) solid var(--magenta);padding:2px;display:flex;gap:2px}
@@ -62,7 +61,6 @@ a{color:var(--magenta)}
 @keyframes run{to{background-position:0 64px,0 64px}}
 @keyframes blink{50%{opacity:0}}
 @keyframes flip{50%{transform:rotate(180deg)}}
-@keyframes jitter{0%,88%{transform:translate(0,0)}90%{transform:translate(-3px,1px)}93%{transform:translate(4px,-2px)}96%{transform:translate(-1px,0)}}
 
 /* ---------- SEÇÕES ---------- */
 section.mod{padding-block:72px;border-top:2px dashed var(--magenta-deep)}
@@ -192,10 +190,10 @@ footer{padding-block:48px;border-top:2px dashed var(--magenta-deep);font-size:19
 
 <!-- ============ HERO ============ -->
 <header class="hero" aria-label="Demonstração da tela de abertura">
-  <pre class="ascii" id="ascii" aria-hidden="true"></pre>
+  <pre class="ascii" data-ascii aria-hidden="true"></pre>
   <p class="where">IFFAR / FW · CIÊNCIA DA COMPUTAÇÃO</p>
   <p class="eyebrow">09 A 13 DE NOVEMBRO</p>
-  <svg class="logo" id="logo" viewBox="330 350 420 290" role="img" aria-label="Símbolo de circuito em forma de árvore"></svg>
+  <img class="logo" src="../assets/logo-cc-icon.svg" alt="Logo do curso de Ciência da Computação">
   <p class="loading"><span id="typed"></span><span class="caret"></span></p>
   <div class="bar" id="bar" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"><span id="cur"></span><span class="hg" id="hg"></span></div>
@@ -209,7 +207,7 @@ footer{padding-block:48px;border-top:2px dashed var(--magenta-deep);font-size:19
   <div class="mod-head"><span class="path">C:\SACC\<b>conceito.txt</b></span><h2>O conceito</h2></div>
   <div class="cols">
     <div>
-      <p class="lead">O site é um sistema antigo dando boot. Cada seção é um módulo do <b style="color:var(--magenta);font-weight:400">Protocolo SACC v.3</b> que "carrega" enquanto a pessoa rola a página.</p>
+      <p class="lead">O site é um sistema antigo dando boot. Cada seção é um módulo do <b style="color:var(--magenta);font-weight:400">SACC v.3</b> que "carrega" enquanto a pessoa rola a página.</p>
       <p>A referência são as artes que vocês já fizeram: fundo preto de tela CRT, magenta neon, a grade synthwave no chão, o cursor com ampulheta e o símbolo de circuito com o RGB desalinhado, como um monitor velho mal calibrado.</p>
       <p class="small">"v.3" vira motivo visual: o número 3 aparece como textura ASCII no fundo, igual nos posts.</p>
     </div>
@@ -264,7 +262,7 @@ footer{padding-block:48px;border-top:2px dashed var(--magenta-deep);font-size:19
   <div class="el-grid">
     <div class="el">
       <div class="stage"><span class="rgb-word" data-t="SACC">SACC</span></div>
-      <div class="txt"><h3>Aberração RGB</h3><p>Vermelho e ciano deslocados 3px. Passe o mouse: vira glitch. Usar no logo e em títulos de destaque.</p></div>
+      <div class="txt"><h3>Aberração RGB</h3><p>Vermelho e ciano deslocados 3px. Passe o mouse: vira glitch.</p></div>
     </div>
     <div class="el">
       <div class="stage"><pre class="ascii-mini" id="ascii-mini" aria-hidden="true"></pre></div>
@@ -323,7 +321,6 @@ footer{padding-block:48px;border-top:2px dashed var(--magenta-deep);font-size:19
   <ul class="motion" style="margin-top:24px">
     <li><b>BOOT</b><span>Na abertura: texto digitado letra a letra + barra de carregamento em blocos.</span></li>
     <li><b>CURSOR</b><span>Caret piscando e ampulheta virando a cada segundo.</span></li>
-    <li><b>GLITCH</b><span>O logo treme a cada ~3s; títulos dão glitch no hover.</span></li>
     <li><b>GRADE</b><span>Chão synthwave em loop infinito.</span></li>
     <li><b>MÓDULOS</b><span>Ao entrar na tela, o título da seção "digita" o caminho C:\SACC\...</span></li>
     <li><b>ACESSIBILIDADE</b><span>Com "reduzir movimento" ligado no sistema, tudo fica parado.</span></li>
@@ -335,11 +332,11 @@ footer{padding-block:48px;border-top:2px dashed var(--magenta-deep);font-size:19
   <div class="mod-head"><span class="path">C:\SACC\<b>mapa_do_site.txt</b></span><h2>Estrutura da página</h2></div>
   <p>Uma página só, com menu fixo no topo levando a cada seção.</p>
   <div class="wire" style="margin-top:24px">
-    <div class="wire-row"><div class="id">/boot<b>Abertura</b></div><div><p>Tela de carregamento (a mesma do topo deste guia): datas, símbolo, "CARREGANDO PROTOCOLO SACC v.3..." e, ao terminar, aparece o título SEMANA ACADÊMICA + botão de inscrição.</p></div></div>
+    <div class="wire-row"><div class="id">/boot<b>Abertura</b></div><div><p>Tela de carregamento (a mesma do topo deste guia): datas, símbolo, "CARREGANDO..." e, ao terminar, aparece o título SEMANA ACADÊMICA + botão de inscrição.</p></div></div>
     <div class="wire-row"><div class="id">/sobre<b>O evento</b></div><div><p>Janela de terminal com o texto sobre a semana, para quem é, local e números rápidos (dias, atividades, palestrantes).</p></div></div>
-    <div class="wire-row"><div class="id">/cronograma<b>Cronograma</b></div><div><p>Abas SEG 09 a SEX 13. Cada atividade: horário, ícone, título, palestrante/sala e etiqueta do tipo.</p></div></div>
+    <div class="wire-row"><div class="id">/cronograma<b>Cronograma</b></div><div><p>Um bloco por dia, de SEG 09 a SEX 13. Cada atividade é um card de linha: foto à esquerda; horário, etiqueta do tipo, pessoa e título à direita. Pausas como coffee break são linhas finas de marcação.</p></div></div>
     <div class="wire-row"><div class="id">/inscricao<b>Inscrição</b></div><div><p>Chamada grande com contagem regressiva e botão "EXECUTAR INSCRIÇÃO" abrindo o Google Forms em nova aba. Grade synthwave ao fundo.</p></div></div>
-    <div class="wire-row"><div class="id">/eof<b>Rodapé</b></div><div><p>IFFAR / FW, contato, Instagram do curso e um "&gt; FIM DO PROTOCOLO_".</p></div></div>
+    <div class="wire-row"><div class="id">/eof<b>Rodapé</b></div><div><p>IFFAR / FW, contato e Instagram do curso.</p></div></div>
   </div>
 </section>
 
@@ -359,6 +356,7 @@ footer{padding-block:48px;border-top:2px dashed var(--magenta-deep);font-size:19
 
 <footer><div class="wrap">&gt; FIM DO GUIA · Semana Acadêmica de Ciência da Computação · IFFAR Frederico Westphalen · 09–13/11/2026<span style="animation:blink 1s steps(1) infinite">_</span></div></footer>
 
+<script src="../js/pixel.js"></script>
 <script>
 (function(){
   const $ = id => document.getElementById(id);
@@ -388,26 +386,6 @@ footer{padding-block:48px;border-top:2px dashed var(--magenta-deep);font-size:19
   };
   $('icons').innerHTML = Object.entries(ICONS).map(([k,r])=>`<figure>${sprite(r,{X:M},4)}<figcaption>${k}</figcaption></figure>`).join('');
 
-  // ---- logo de circuito com RGB ----
-  const paths = [
-    "M520 615 L478 575 L410 542 L355 495",
-    "M478 575 L477 490 L447 460 L445 422",
-    "M520 615 L565 578 L612 535 L690 515 L725 447",
-    "M565 578 L530 540 L530 478 L508 455 L508 400",
-    "M530 478 L563 465 L563 372",
-    "M612 535 L608 422",
-    "M690 515 L660 500 L660 418"
-  ];
-  const nodes=[[520,615],[478,575],[565,578],[612,535],[690,515],[410,542],[355,495],[477,490],[530,478],[445,422],[508,400],[563,372],[608,422],[660,418],[725,447]];
-  function layer(col,dx,dy,cls){
-    return `<g transform="translate(${dx} ${dy})" class="${cls||''}" fill="none" stroke="${col}" stroke-width="7" stroke-linejoin="miter">`+
-      paths.map(d=>`<path d="${d}"/>`).join('')+
-      nodes.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="13" fill="var(--void)" stroke-width="8"/>`).join('')+`</g>`;
-  }
-  $('logo').innerHTML =
-    `<defs><pattern id="dots" width="3" height="3" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="${W}"/></pattern></defs>`+
-    `<g class="c">`+layer(v('--rgb-r'),-4,-3)+layer(v('--rgb-y'),-2,-1)+layer(v('--rgb-c'),3,3)+layer('url(#dots)',0,0)+`</g>`;
-
   // ---- ASCII "3" ----
   function asciiShape(text, cols, rows, fontPx){
     const c=document.createElement('canvas'); c.width=cols; c.height=rows;
@@ -418,12 +396,10 @@ footer{padding-block:48px;border-top:2px dashed var(--magenta-deep);font-size:19
     for(let y=0;y<rows;y++){ for(let i=0;i<cols;i++){ out += d[(y*cols+i)*4+3]>110 ? '3' : ' '; } out+='\n'; }
     return out;
   }
-  // caracteres são ~2x mais altos que largos: o canvas é esticado na horizontal
-  $('ascii').textContent = asciiShape('v.3', 120, 38, 36);
   $('ascii-mini').textContent = asciiShape('3', 34, 15, 17);
 
   // ---- boot: digitação + barra ----
-  const msg='CARREGANDO PROTOCOLO SACC v.3...';
+  const msg='CARREGANDO...';
   const bar=$('bar'); for(let i=0;i<16;i++) bar.appendChild(document.createElement('i'));
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduce){ $('typed').textContent=msg; [...bar.children].forEach(b=>b.classList.add('on')); }
